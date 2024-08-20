@@ -1,0 +1,12 @@
+﻿<div class="card text-center mb-3">
+  <h5 class="card-title card-header">@CardTitle</h5>
+  <div class="card-body">
+    @ChildContent
+  </div>
+</div>
+@code {
+  [Parameter]
+  public RenderFragment? ChildContent { get; set; }
+  [Parameter]
+  public string CardTitle { get; set; } = string.Empty;
+}

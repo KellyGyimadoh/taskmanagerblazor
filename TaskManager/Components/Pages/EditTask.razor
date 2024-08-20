@@ -1,0 +1,149 @@
+﻿@page "/editTask"
+@page "/editTask/{id:int}"
+@inject NavigationManager NavigationManager
+@inject UserTaskClient TaskClient
+@inject PriorityClient PriorityClient
+@rendermode InteractiveServer
+<PageTitle>@title</PageTitle>
+<Header Title="@title" />
+
+  @if(userTasks is null || priorities is null)
+    {
+
+    }
+    else
+    {
+<BodyCard CardTitle="@title">
+
+
+        <div class="row mt-3 mb-3 text-start">
+            <div class="col-6 ">
+
+
+                <EditForm Model="@userTasks" FormName="EditTask" OnValidSubmit="HandleSubmitAsync" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <h3>Task Name</h3>
+                        </label>
+                        <InputText class="form-control" @bind-Value="@userTasks.Name" id="name"
+                            aria-describedby="Taskname" />
+                        <ValidationMessage For="()=>userTasks.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <h3>Description</h3>
+                        </label>
+                        <InputText class="form-control" @bind-Value="@userTasks.Description" id="description" />
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="priority" class="form-label">
+                            <h3>Level Of Priority</h3>
+                        </label>
+                        <InputRadioGroup @bind-Value="userTasks.PriorityId" class="d-flex ">
+
+                            @foreach (var priority in priorities)
+                            {
+                                <div class="form-check">
+                                    <InputRadio Value="@priority.Id" class="form-check-input" id="@priority.Name" />
+                                    <label for="@priority.Name" class="form-check-label">@priority.Name</label>
+                                </div>
+
+                            }
+                        </InputRadioGroup>
+                        <p>Selected Priority: @userTasks.PriorityId</p>
+                        <ValidationMessage For="()=>userTasks.PriorityId" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="deadlinedate" class="form-label">
+                            <h3>DeadLine Date</h3>
+                        </label>
+                        <InputDate class="form-control" @bind-Value="@userTasks.DeadlineDate" id="deadlinedate" />
+                        <ValidationMessage For="()=>userTasks.DeadlineDate" />
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="status" class="form-label">
+                            <h3>Status</h3>
+                        </label>
+                        <InputSelect id="status" @bind-Value="userTasks.Status" class="form-select">
+                            <option value="false">Pending</option>
+                            <option value="true">Completed</option>
+                        </InputSelect>
+                        <ValidationMessage For="()=>userTasks.Status"/>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="submit" class="btn btn-primary">@Buttontitle</button>
+                       <a href="/" class="btn btn-secondary ms-2" role="button">Cancel</a>
+                    </div>
+
+                </EditForm>
+
+
+            </div>
+        </div>
+</BodyCard>
+    }
+
+@code {
+
+    [Parameter]
+    public int? id { get; set; }
+
+    private string title = string.Empty;
+    private string Buttontitle = string.Empty;
+
+    [SupplyParameterFromForm]
+    private UserTaskDetails? userTasks { get; set; }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (userTasks is not null)
+        {
+            return;
+        }
+        if (id is not null)
+        {
+            userTasks = await TaskClient.GetTaskDetailsAsync(id.Value);
+            title = $"Edit {userTasks.Name}";
+            Buttontitle = $"Confirm Edit";
+
+        }
+        else
+        {
+            userTasks = new()
+                {
+                    Name = string.Empty,
+                    DeadlineDate = DateOnly.FromDateTime(DateTime.Now),
+                     Status = false // Default to Pending for new tasks
+                };
+            title = $"Add New Task";
+            Buttontitle = $"Add New Task";
+           
+        }
+    }
+
+
+    private Priority[]? priorities;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        priorities = await PriorityClient.GetPrioritiesAsync();
+
+    }
+
+
+    private async Task HandleSubmitAsync()
+    {
+        ArgumentNullException.ThrowIfNull(userTasks);
+        if(id is null){
+       await TaskClient.AddUserTaskAsync(userTasks);
+        }else{
+            userTasks.Id= id.Value;
+          await  TaskClient.UpdateUserTaskAsync(userTasks);
+        }
+        NavigationManager.NavigateTo("/");
+    }
+}
+

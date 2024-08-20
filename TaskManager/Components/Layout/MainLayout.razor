@@ -1,0 +1,21 @@
+﻿@inherits LayoutComponentBase
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="col-lg-3 col-md-4 sidebar">
+            <NavMenu />
+        </aside>
+
+        <!-- Main Content -->
+        <main class="col-lg-9 col-md-8">
+            @Body
+        </main>
+    </div>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

@@ -1,0 +1,30 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "name": "buy phone",
+      "status": false,
+      "description": "this sunday",
+      "deadlineDate": "2024-08-31",
+      "priorityId": 2
+    }
+  ],
+  "priorities": [
+    {
+      "id": "1",
+      "Name": "Low"
+    },
+    {
+      "id": "2",
+      "Name": "Normal"
+    },
+    {
+      "id": "3",
+      "Name": "High"
+    },
+    {
+      "id": "4",
+      "Name": "Critical"
+    }
+  ]
+}
