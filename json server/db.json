@@ -1,13 +1,6 @@
 {
   "tasks": [
-    {
-      "id": "1",
-      "name": "buy phone",
-      "status": false,
-      "description": "this sunday",
-      "deadlineDate": "2024-08-31",
-      "priorityId": 2
-    }
+   
   ],
   "priorities": [
     {

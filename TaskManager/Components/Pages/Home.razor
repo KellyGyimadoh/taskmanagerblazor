@@ -69,7 +69,7 @@
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
-                            <DeleteTask Task="task"/>
+                            <DeleteTask Task="task" />
                         </td>
 
                     </tr>
@@ -105,10 +105,12 @@
 
             // Filter the tasks in-memory
             ArgumentNullException.ThrowIfNull(userTasks);
+
             filteredTasks = userTasks
             .Where(t => t.Name.ToLower().Contains(searchTerm) ||
-            t.Description.ToLower().Contains(searchTerm))
+            (t.Description?.ToLower() ?? string.Empty).Contains(searchTerm))
             .ToArray();
+
         }
     }
 

@@ -34,10 +34,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xIZWFkZXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/csharp/TaskManager/TaskManager/Components/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
 [D:/csharp/TaskManager/TaskManager/Components/Pages/EditTask.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0VGFzay5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -52,10 +48,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/csharp/TaskManager/TaskManager/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/csharp/TaskManager/TaskManager/Components/SideBar.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaWRlQmFyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/csharp/TaskManager/TaskManager/Components/_Imports.razor]

@@ -14,6 +14,7 @@ namespace TaskManager.Models;
     }
 public class UserTask()
 {
+    
 public  int Id{get; set;}
 
 public required string Name{get; set;}= string.Empty;
