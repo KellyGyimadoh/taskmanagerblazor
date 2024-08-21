@@ -9,7 +9,7 @@ namespace TaskManager.Models;
 
 public class UserTaskDetails
 {
-public int Id{get; set;}
+public int Id {get; set;}
 
 [Required]
 public required string Name{get; set;}
@@ -27,6 +27,6 @@ public DateOnly? DeadlineDate{get; set;}
 public  int? PriorityId {get; set;}
 
  // This property returns the corresponding enum value's name based on PriorityId
-    public string? PriorityName => PriorityId.HasValue ? ((LevelOfPriority)PriorityId.Value).ToString() : null;
+  //  public string? PriorityName => PriorityId.HasValue ? ((LevelOfPriority)PriorityId.Value).ToString() : null;
 
 }

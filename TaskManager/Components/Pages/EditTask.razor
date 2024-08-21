@@ -53,7 +53,7 @@
 
                             }
                         </InputRadioGroup>
-                        <p>Selected Priority: @userTasks.PriorityName</p>
+                        <p>Selected Priority:</p>
                         <ValidationMessage For="()=>userTasks.PriorityId" />
                     </div>
                     <div class="mb-3">
@@ -138,7 +138,6 @@
     {
         ArgumentNullException.ThrowIfNull(userTasks);
         if(id is null){
-            
        await TaskClient.AddUserTaskAsync(userTasks);
         }else{
             userTasks.Id= id.Value;

@@ -1,6 +1,79 @@
 {
   "tasks": [
-   
+    {
+      "id": "1",
+      "name": "Buy Ps5",
+      "status": true,
+      "description": null,
+      "deadlineDate": "2024-08-21",
+      "priorityId": 4
+    },
+    {
+      "id": "2",
+      "Name": "Buy groceries",
+      "Status": false,
+      "Description": null,
+      "DeadlineDate": "2024-09-21",
+      "PriorityId": 2,
+      "status": true
+    },
+    {
+      "id": "3",
+      "Name": "Get A Job",
+      "Status": false,
+      "Description": null,
+      "DeadlineDate": "2024-08-21",
+      "PriorityId": 4,
+      "status": true
+    },
+    {
+      "id": "4",
+      "name": "go home",
+      "status": false,
+      "description": null,
+      "deadlineDate": "2024-08-21",
+      "priorityId": 2
+    },
+    {
+      "id": "5",
+      "name": "beat",
+      "status": false,
+      "description": "okay",
+      "deadlineDate": "2024-08-21",
+      "priorityId": 2
+    },
+    {
+      "id": "6",
+      "name": "kk",
+      "status": true,
+      "description": null,
+      "deadlineDate": "2024-08-21",
+      "priorityId": 1
+    },
+    {
+      "id": "7",
+      "name": "poi",
+      "status": true,
+      "description": null,
+      "deadlineDate": "2024-08-21",
+      "priorityId": 3
+    },
+    {
+      "id": "8",
+      "name": "nm",
+      "status": true,
+      "description": null,
+      "deadlineDate": "2024-08-21",
+      "priorityId": 4
+    },
+    {
+      "id": 0,
+      "name": "watch ballball",
+      "status": false,
+      "description": null,
+      "deadlineDate": "2024-08-21",
+      "priorityId": 2
+    }
   ],
   "priorities": [
     {

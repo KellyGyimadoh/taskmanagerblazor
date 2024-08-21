@@ -16,14 +16,24 @@
             <div class="d-flex justify-content-center">
                 <InputText id="search" @bind-Value="@userTask.Name" placeholder="Search for a task"
                     class="form-control" />
-                <button class="btn btn-success ms-2" @onclick="SearchTasksAsync">Search</button>
+                <div class="d-flex justify-content-end">
+                    <InputSelect id="filter" @bind-Value="@selectedFilterOption">
+                        <option value="All">All</option>
+                        <option value="priorityfilter">Filter By Priority</option>
+                        <option value="datefilter">Filter By Date</option>
+                    </InputSelect>
+                </div>
+                <button class="btn btn-success ms-2" @onclick="FilterTaskAction">Search</button>
             </div>
+
         </div>
+
+
     </div>
 
     @if (filteredTasks == null || !filteredTasks.Any())
     {
-        <p><em>No tasks found</em></p>
+        <p><em>No tasks found..Loading..</em></p>
     }
     else
     {
@@ -52,20 +62,24 @@
                         <td>@task.Description</td>
                         <td>@task.DeadlineDate?.ToString("yyyy-MM-dd")</td>
                         <td>@task.Priority</td>
-                        <td>@(task.Status ? "Completed" : "Pending")</td>
+                        <td><button class="@(task.Status? "btn btn-success" : "btn btn-warning")"> 
+                            @(task.Status ? "Completed" : "Pending")
+
+                        </button>
+                        </td>
                         <td>
                             <!-- Button to toggle the status -->
-                            <button class="@(task.Status? "btn btn-success":"btn btn-warning")"
+                            <button class="@(task.Status? "btn btn-primary":"btn btn-dark")"
                                 @onclick="() => ChangeStatusAsync(task)">
-                                @(task.Status ? "Complete" : "Pending")
+                                @(task.Status ? "Undo" : "Mark As Done")
                             </button>
                         </td>
                         <td>
-                            <div class="d-flex">
-                                <a href="@TaskUrl(task.Id)" class="btn btn-primary" role="button">
+                            <div class="d-flex ms-2">
+                                <a href="@TaskUrl(task.Id)" class="btn btn-primary ms-2" role="button">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(task)">
+                                <button class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(task)">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
@@ -92,6 +106,74 @@
     }
 
     private string buttonColor = string.Empty;
+
+    private string selectedFilterOption = "All"; // Default to "All"
+   
+    private async Task ChangeStatusAsync(UserTask task)
+{
+    // Toggle the status
+    task.Status = !task.Status;
+
+    Console.WriteLine($"ChangeStatusAsync called for Task ID: {task.Id} with Status: {task.Status}");
+    try
+    {
+        var updatedTask = new UserTask
+        {
+            Id = task.Id,
+            Status = task.Status,
+            Name = task.Name,
+            PriorityId = task.PriorityId
+        };
+
+        // Update the task status on the backend
+        await TaskClient.UpdateTaskStatusAsync(updatedTask);
+
+        // Manually update the task in the filtered list
+        var taskInFilteredList = filteredTasks?.FirstOrDefault(t => t.Id == task.Id);
+        if (taskInFilteredList != null)
+        {
+            taskInFilteredList.Status = task.Status;
+        }
+
+        // Reapply filtering to maintain the current view
+        FilterTaskAction();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error updating task status: {ex.Message}");
+        await JS.InvokeVoidAsync("alert", $"Error updating task status: {ex.Message}");
+    }
+}
+
+private void FilterTaskAction()
+{
+    ArgumentNullException.ThrowIfNull(userTasks);
+
+    // Start with all tasks
+    IEnumerable<UserTask> tasks = userTasks;
+
+    // Apply search filtering
+    if (!string.IsNullOrWhiteSpace(userTask?.Name))
+    {
+        var searchTerm = userTask.Name.ToLower();
+        tasks = tasks.Where(t => t.Name.ToLower().Contains(searchTerm) ||
+        (t.Description?.ToLower() ?? string.Empty).Contains(searchTerm));
+    }
+
+    // Apply additional filter options
+    switch (selectedFilterOption)
+    {
+        case "priorityfilter":
+            tasks = tasks.OrderByDescending(t => t.PriorityId);
+            break;
+        case "datefilter":
+            tasks = tasks.OrderBy(t => t.DeadlineDate);
+            break;
+            // You can add more cases if needed
+    }
+
+    filteredTasks = tasks.ToArray();
+}
     private void SearchTasksAsync()
     {
         if (string.IsNullOrWhiteSpace(userTask?.Name))
@@ -118,8 +200,11 @@
     private static string TaskUrl(int id) => $"editTask/{id}";
 
     private string GetDeleteModalId(UserTask task) => $"#{DeleteTask.GetModalId(task)}";
+private string GetRowClass(bool isCompleted) => isCompleted ? "table-danger text-decoration-line-through" : "";
 
-    private async Task ChangeStatusAsync(UserTask task)
+    private string GetTaskNameClass(bool isCompleted) => isCompleted ? "table-danger text-decoration-line-through" : "";
+
+  /*  private async Task ChangeStatusAsync(UserTask task)
     {
         // Toggle the status
         task.Status = !task.Status;
@@ -148,7 +233,44 @@
         }
     }
 
-    private string GetRowClass(bool isCompleted) => isCompleted ? "table-success text-decoration-line-through" : "";
+   */
+   
+    /*private void FilterTaskAction()
+    {
+    ArgumentNullException.ThrowIfNull(userTasks);
 
-    private string GetTaskNameClass(bool isCompleted) => isCompleted ? "text-decoration-line-through" : "";
-}
+    // Filter tasks based on the selected filter option
+    switch (selectedFilterOption)
+    {
+    case "All":
+    // Show all tasks
+    filteredTasks = userTasks;
+    break;
+
+    case "priorityfilter":
+    // Implement filtering by priority
+    filteredTasks = userTasks
+    .OrderByDescending(t => t.PriorityId) // Order by priority (you can adjust this logic as needed)
+    .ToArray();
+    break;
+
+    case "datefilter":
+    // Implement filtering by date (e.g., upcoming deadlines)
+    filteredTasks = userTasks
+    .OrderBy(t => t.DeadlineDate) // Order by date (ascending)
+    .ToArray();
+    break;
+
+    default:
+    // Default search by name (case-insensitive)
+    var searchTerm = selectedFilterOption.ToLower(); // Using the selected filter as search term for demonstration
+
+    filteredTasks = userTasks
+    .Where(t => t.Name.ToLower().Contains(searchTerm) ||
+    (t.Description?.ToLower() ?? string.Empty).Contains(searchTerm))
+    .ToArray();
+    break;
+    }
+    }
+    */
+    }

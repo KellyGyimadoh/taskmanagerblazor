@@ -50,90 +50,13 @@ public async Task UpdateTaskStatusAsync(UserTask updatedUserTask)
 
 
 
-public async Task<IEnumerable<UserTask>> SearchTasksAsync(string searchTerm)
-{
-    // Example API call to search tasks
-    var response = await httpClient.GetAsync($"tasks?query={Uri.EscapeDataString(searchTerm)}");
-    response.EnsureSuccessStatusCode();
-    return await response.Content.ReadFromJsonAsync<IEnumerable<UserTask>>() ??[];
-}
-
-//private readonly Priority[] priorities= new PriorityClient().GetPriority();
-
-/*public void  AddUserTask(UserTaskDetails taskDetails){
-    var priority= GetPriorityEnum(taskDetails.PriorityId);
-    var userTask= new UserTask{
-        Id= taskDetails.Id+1,
-        Name= taskDetails.Name,
-        Priority= priority.Name.ToString(),
-        Description=taskDetails.Description,
-        DeadlineDate= taskDetails.DeadlineDate,
-        Status= taskDetails.Status
-
-    };
-    tasks.Add(userTask);
-} */
-
-/*public UserTaskDetails GetTaskDetails(int id){
-    UserTask usertask= GetUserTaskId(id);
-     var priority = priorities.Single(priority => string.Equals(priority.Name.ToString(),
-                usertask.Priority,
-                StringComparison.OrdinalIgnoreCase));
-
-   return new UserTaskDetails{
-    Id=usertask.Id,
-    Name=usertask.Name,
-    PriorityId=priority.Id.ToString(),
-    DeadlineDate= usertask.DeadlineDate,
-    Description= usertask.Description,
-    Status= usertask.Status
-   };
-} */
-
-
-/*public void DeleteUserTask(int id){
-    var usertask= GetUserTaskId(id);
-    tasks.Remove(usertask);
-}*/
-
-
-//update
-
-/*public void UpdateUserTask(UserTaskDetails updatedUserTask){
-
-    var priority= GetPriorityEnum(updatedUserTask.PriorityId);
-    UserTask existingTask= GetUserTaskId(updatedUserTask.Id);
-    existingTask.Name= updatedUserTask.Name;
-    existingTask.Description= updatedUserTask.Description;
-    existingTask.Priority= priority.Name.ToString();
-    existingTask.DeadlineDate= updatedUserTask.DeadlineDate;
-    existingTask.Status= updatedUserTask.Status;
-
+// public async Task<IEnumerable<UserTask>> SearchTasksAsync(string searchTerm)
+// {
     
-}*/
+//     var response = await httpClient.GetAsync($"tasks?query={Uri.EscapeDataString(searchTerm)}");
+//     response.EnsureSuccessStatusCode();
+//     return await response.Content.ReadFromJsonAsync<IEnumerable<UserTask>>() ??[];
+// }
 
 
-/*public void UpdateTaskStatus(UserTask task)
-{
-    var existingtask = GetUserTaskId(task.Id);
-    if (existingtask != null)
-    {
-        existingtask.Status = task.Status;
-        // Add any logic here to save changes, e.g., saving to a database or updating an API.
-    }
-}*/
-
-
-
-/*private Priority GetPriorityEnum(string? id){
-    ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
-
-    return priorities.Single(priority=>priority.Id==int.Parse(id));
-}
-
-private UserTask GetUserTaskId(int id){
-    UserTask? task = tasks.Find(task=>task.Id==id);
-    ArgumentNullException.ThrowIfNull(task);
-    return task;
-}*/
 }
