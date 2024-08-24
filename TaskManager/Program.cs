@@ -1,4 +1,6 @@
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using Syncfusion.Blazor;
 using TaskManager.Clients;
 using TaskManager.Components;
 
@@ -12,8 +14,12 @@ builder.Services.AddRazorComponents()
 // builder.Services.AddSingleton<PriorityClient>();
 
 var taskAppUrl= builder.Configuration["appUrl"] ?? throw new Exception("Failed to load backend file");
-builder.Services.AddHttpClient<UserTaskClient>(Client=>Client.BaseAddress=new Uri(taskAppUrl));
+builder.Services.AddHttpClient<UserTaskClient>(Client=>{Client.BaseAddress=new Uri(taskAppUrl);
+Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+});
 builder.Services.AddHttpClient<PriorityClient>(Client=>Client.BaseAddress=new Uri(taskAppUrl));
+builder.Services.AddSyncfusionBlazor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

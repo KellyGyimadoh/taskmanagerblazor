@@ -14,6 +14,19 @@
     else
     {
 <BodyCard CardTitle="@title">
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
 
 
         <div class="row mt-3 mb-3 text-start">
@@ -42,7 +55,7 @@
                         <label for="priority" class="form-label">
                             <h3>Level Of Priority</h3>
                         </label>
-                        <InputRadioGroup @bind-Value="userTasks.PriorityId" class="d-flex ">
+                        <InputRadioGroup @bind-Value="userTasks.Priority_id" class="d-flex ">
 
                             @foreach (var priority in priorities)
                             {
@@ -54,14 +67,14 @@
                             }
                         </InputRadioGroup>
                         <p>Selected Priority:</p>
-                        <ValidationMessage For="()=>userTasks.PriorityId" />
+                        <ValidationMessage For="()=>userTasks.Priority_id" />
                     </div>
                     <div class="mb-3">
                         <label for="deadlinedate" class="form-label">
                             <h3>DeadLine Date</h3>
                         </label>
-                        <InputDate class="form-control" @bind-Value="@userTasks.DeadlineDate" id="deadlinedate" />
-                        <ValidationMessage For="()=>userTasks.DeadlineDate" />
+                        <InputDate class="form-control" @bind-Value="@userTasks.Deadline_date" id="deadlinedate" />
+                        <ValidationMessage For="()=>userTasks.Deadline_date" />
                     </div>
                     <div class="col-12 mb-3">
                         <label for="status" class="form-label">
@@ -87,6 +100,8 @@
     }
 
 @code {
+private string successMessage = string.Empty;
+private string errorMessage = string.Empty;
 
     [Parameter]
     public int? id { get; set; }
@@ -114,7 +129,7 @@
             userTasks = new()
                 {
                     Name = string.Empty,
-                    DeadlineDate = DateOnly.FromDateTime(DateTime.Now),
+                    Deadline_date = DateOnly.FromDateTime(DateTime.Now),
                      Status = false // Default to Pending for new tasks
                 };
             title = $"Add New Task";
@@ -134,16 +149,30 @@
     }
 
 
-    private async Task HandleSubmitAsync()
+   private async Task HandleSubmitAsync()
+{
+    ArgumentNullException.ThrowIfNull(userTasks);
+
+    try
     {
-        ArgumentNullException.ThrowIfNull(userTasks);
-        if(id is null){
-       await TaskClient.AddUserTaskAsync(userTasks);
-        }else{
-            userTasks.Id= id.Value;
-          await  TaskClient.UpdateUserTaskAsync(userTasks);
+        if (id is null)
+        {
+            await TaskClient.AddUserTaskAsync(userTasks);
+            successMessage = "Task successfully added!";
+        }
+        else
+        {
+            userTasks.Id = id.Value;
+            await TaskClient.UpdateUserTaskAsync(userTasks);
+            successMessage = "Task successfully updated!";
         }
         NavigationManager.NavigateTo("/");
     }
+    catch (Exception ex)
+    {
+        errorMessage = $"Error: {ex.Message}"; // Handle any errors
+    }
+}
+
 }
 

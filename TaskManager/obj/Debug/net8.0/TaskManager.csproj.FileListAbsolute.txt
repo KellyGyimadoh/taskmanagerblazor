@@ -57,3 +57,10 @@ D:\csharp\TaskManager\TaskManager\obj\Debug\net8.0\TaskManager.pdb
 D:\csharp\TaskManager\TaskManager\obj\Debug\net8.0\TaskManager.genruntimeconfig.cache
 D:\csharp\TaskManager\TaskManager\obj\Debug\net8.0\ref\TaskManager.dll
 D:\csharp\TaskManager\TaskManager\obj\Debug\net8.0\TaskManager.sourcelink.json
+D:\csharp\TaskManager\TaskManager\obj\Debug\net8.0\TaskManager.csproj.AssemblyReference.cache
+D:\csharp\TaskManager\TaskManager\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\csharp\TaskManager\TaskManager\bin\Debug\net8.0\Syncfusion.Blazor.dll
+D:\csharp\TaskManager\TaskManager\bin\Debug\net8.0\Syncfusion.ExcelExport.Net.dll
+D:\csharp\TaskManager\TaskManager\bin\Debug\net8.0\Syncfusion.Licensing.dll
+D:\csharp\TaskManager\TaskManager\bin\Debug\net8.0\Syncfusion.PdfExport.Net.dll
+D:\csharp\TaskManager\TaskManager\obj\Debug\net8.0\TaskMana.F3FB485A.Up2Date

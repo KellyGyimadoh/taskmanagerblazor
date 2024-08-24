@@ -1,32 +1,22 @@
-using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using StringConverter= TaskManager.Converter.StringConverter;
-
-namespace TaskManager.Models;
 
 public class UserTaskDetails
 {
-public int Id {get; set;}
+    public int Id { get; set; }
 
-[Required]
-public required string Name{get; set;}
-[Required]
-public bool Status{get;  set;}
+    [Required]
+    public required string Name { get; set; }
 
-public string? Description{get;set;}
+    [JsonConverter(typeof(BooleanIntConverter))]
+    [Required]
+    public bool Status { get; set; }
 
-[Required]
-public DateOnly? DeadlineDate{get; set;}
+    public string? Description { get; set; }
 
-[Required(ErrorMessage ="Please select a priority level")]
+    [Required]
+    public DateOnly? Deadline_date { get; set; }
 
-//[JsonConverter(typeof(StringConverter))]
-public  int? PriorityId {get; set;}
-
- // This property returns the corresponding enum value's name based on PriorityId
-  //  public string? PriorityName => PriorityId.HasValue ? ((LevelOfPriority)PriorityId.Value).ToString() : null;
-
+    [Required(ErrorMessage = "Please select a priority level")]
+    public int? Priority_id { get; set; }  // Ensure this matches 'priority_id' in your request and database
 }

@@ -6,7 +6,7 @@ public class PriorityClient(HttpClient httpClient)
 {
 
     public async Task<Priority[]>GetPrioritiesAsync()
-    =>await httpClient.GetFromJsonAsync<Priority[]>("priorities")??[];
+    =>await httpClient.GetFromJsonAsync<Priority[]>("api/priorities")??[];
 /*private readonly Priority[] priorities={
     new(){
         Id=1,
