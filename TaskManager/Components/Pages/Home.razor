@@ -5,10 +5,16 @@
 @inject IJSRuntime JS
 @rendermode InteractiveServer
 
-
+<style>
+    .custom-font{
+        font-size: 20px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+</style>
 <PageTitle>All Tasks</PageTitle>
 
 <Header Title="ALL TASK" />
+
 
 <BodyCard CardTitle="All Tasks">
     <div class="row mt-3 mb-3">
@@ -34,16 +40,18 @@
     }
     else
     {
-        <SfGrid DataSource="@filteredTasks" AllowPaging="true">
+        <SfGrid CssClass="custom-font" DataSource="@filteredTasks" AllowPaging="true" Width="auto" EnableStickyHeader=true>
+            <GridPageSettings PageSize="5" PageCount="3" PageSizes="@pagerDropDown"></GridPageSettings>
+            
             <GridColumns>
-               <GridColumn HeaderText="No" Width="120" Template="@((context) => CountTemplate((UserTask)context, filteredTasks?.ToList().IndexOf((UserTask)context) ?? 0))"></GridColumn>
+               <GridColumn HeaderText="No" Width="50"  Template="@((context) => CountTemplate((UserTask)context, filteredTasks?.ToList().IndexOf((UserTask)context) ?? 0))"></GridColumn>
         <GridColumn Field=@nameof(UserTask.Name) HeaderText="Task Name" Width="150"></GridColumn>
                 <GridColumn Field=@nameof(UserTask.Description) HeaderText="Description" Width="150"></GridColumn>
-                <GridColumn Field=@nameof(UserTask.Priority) HeaderText="Priority Level" Width="150"></GridColumn>
-                <GridColumn Field=@nameof(UserTask.DeadlineDate) HeaderText="Due Date" Format="d" Width="150"></GridColumn>
+                <GridColumn Field=@nameof(UserTask.Priority) HeaderText="Priority Level" Width="100"></GridColumn>
+                <GridColumn Field=@nameof(UserTask.DeadlineDate) HeaderText="Due Date" Format="d" Width="100"></GridColumn>
                 <GridColumn HeaderText="Status" Width="150" Template="@((context) => StatusTemplate((UserTask)context))">
                 </GridColumn>
-                <GridColumn HeaderText="Mark as Done" Width="150"
+                 <GridColumn HeaderText="Mark as Done" Width="150"
                     Template="@((context) => MarkAsDoneTemplate((UserTask)context))"></GridColumn>
                 <GridColumn HeaderText="Action" Width="150" Template="@((context) => ActionTemplate((UserTask)context))">
                 </GridColumn>
@@ -56,6 +64,9 @@
     private UserTask[]? filteredTasks;
     private string searchQuery = string.Empty;
     private string selectedFilterOption = "All";
+
+    private static string statusClass(bool isTrue)=>(isTrue? "e-success": "e-warning");
+    public string[] pagerDropDown{get; set;}= new string[]{"All","5","10","15","20"};
 
     protected override async Task OnInitializedAsync()
     {
@@ -140,7 +151,9 @@
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(context)">
             <i class="bi bi-trash"></i>
         </button>
+        <DeleteTask Task="context"/>
     </div>;
+
 
   private RenderFragment CountTemplate(UserTask context, int index) => @<text>@(index + 1)</text>;
 

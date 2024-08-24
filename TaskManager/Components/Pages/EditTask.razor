@@ -3,10 +3,23 @@
 @inject NavigationManager NavigationManager
 @inject UserTaskClient TaskClient
 @inject PriorityClient PriorityClient
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 <PageTitle>@title</PageTitle>
 <Header Title="@title" />
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success fixed-message" role="alert">
+        @successMessage
+    </div>
+}
 
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger fixed-message" role="alert">
+        @errorMessage
+    </div>
+}
   @if(userTasks is null || priorities is null)
     {
 
@@ -14,19 +27,7 @@
     else
     {
 <BodyCard CardTitle="@title">
-@if (!string.IsNullOrEmpty(successMessage))
-{
-    <div class="alert alert-success" role="alert">
-        @successMessage
-    </div>
-}
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger" role="alert">
-        @errorMessage
-    </div>
-}
 
 
         <div class="row mt-3 mb-3 text-start">
@@ -148,7 +149,6 @@ private string errorMessage = string.Empty;
 
     }
 
-
    private async Task HandleSubmitAsync()
 {
     ArgumentNullException.ThrowIfNull(userTasks);
@@ -166,6 +166,10 @@ private string errorMessage = string.Empty;
             await TaskClient.UpdateUserTaskAsync(userTasks);
             successMessage = "Task successfully updated!";
         }
+        await JS.InvokeVoidAsync("window.scrollTo", new object[] { 0, 0 });
+
+        await Task.Delay(3000);
+
         NavigationManager.NavigateTo("/");
     }
     catch (Exception ex)

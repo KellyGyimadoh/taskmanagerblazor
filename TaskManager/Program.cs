@@ -19,6 +19,7 @@ Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("app
 
 });
 builder.Services.AddHttpClient<PriorityClient>(Client=>Client.BaseAddress=new Uri(taskAppUrl));
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NCaF1cWWhBYVB2WmFZfVpgdVRMY15bR3dPIiBoS35RckVrW3xcc3dXRWFZVkV+");
 builder.Services.AddSyncfusionBlazor();
 var app = builder.Build();
 

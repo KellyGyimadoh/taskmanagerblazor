@@ -60,3 +60,10 @@ h1:focus {
 .table-success {
     background-color: #f00d0d !important;
 }
+.fixed-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
