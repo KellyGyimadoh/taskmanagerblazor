@@ -63,6 +63,8 @@ public class UserTaskClient(HttpClient httpClient)
 
     public async Task DeleteUserTaskAsync(int id) => await httpClient.DeleteAsync($"api/tasks/{id}");
 
+    public async Task DeleteAllTasksAsync()=>await httpClient.DeleteAsync("api/tasks");
+
     public async Task UpdateUserTaskAsync(UserTaskDetails updatedUserTask)
     => await httpClient.PutAsJsonAsync($"api/tasks/{updatedUserTask.Id}", updatedUserTask);
 

@@ -2,42 +2,65 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<div class="modal fade" id="@GetModalId(Task)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal for Single Task Deletion -->
+<div class="modal fade" id="@GetModalId(Task)" tabindex="-1" aria-labelledby="singleDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">@title</h1>
+                <h5 class="modal-title" id="singleDeleteModalLabel">Delete @Task?.Name</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="ConfirmAsync">Delete</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => ConfirmAsync(false)">Delete</button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal for All Tasks Deletion -->
+<div class="modal fade" id="@GetDeleteAllModal()" tabindex="-1" aria-labelledby="allDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="allDeleteModalLabel">Delete All Tasks</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => ConfirmAsync(true)">Delete All</button>
+            </div>
+        </div>
+    </div>
+</div>
 @code {
     [Parameter]
     public UserTask? Task { get; set; }
 
-    private string title = string.Empty;
+    [Parameter]
+    public UserTask[]? Tasks { get; set; }
 
-    protected override void OnParametersSet()
-    {
-        title = $"Delete {Task?.Name}";
-    }
+    // Get the ID for the single task delete modal
+    public static string GetModalId(UserTask? task) => task != null ? $"deleteModal{task.Id}" : string.Empty;
 
-    public static string GetModalId(UserTask? task)
-    {
-        ArgumentNullException.ThrowIfNull(task);
-        return $"deleteModal{task.Id}";
-    }
+    // Get the ID for the delete all tasks modal
+    public static string GetDeleteAllModal() => $"deleteModalAll";
 
-    private async Task ConfirmAsync()
+    // Method to confirm deletion - flag indicates whether it's all tasks or a single task
+    private async Task ConfirmAsync(bool isDeleteAll)
     {
-        await TaskClient.DeleteUserTaskAsync(Task!.Id);
+        if (isDeleteAll)
+        {
+            // Call method to delete all tasks
+            await TaskClient.DeleteAllTasksAsync();
+        }
+        else if (Task != null)
+        {
+            // Call method to delete a single task
+            await TaskClient.DeleteUserTaskAsync(Task.Id);
+        }
+
+        // Refresh the page
         NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
     }
 }
-
