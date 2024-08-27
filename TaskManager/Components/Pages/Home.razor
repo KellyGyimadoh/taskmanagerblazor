@@ -7,7 +7,7 @@
 
 
 <style>
-    .custom-font{
+    .custom-font {
         font-size: 20px;
         font-family: Verdana, Geneva, Tahoma, sans-serif;
     }
@@ -15,67 +15,79 @@
 <PageTitle>All Tasks</PageTitle>
 
 <Header Title="ALL TASK" />
- 
 
- <SfSpinner @bind-Visible="@spinnerVisible" Label="Loadind Data..." Size="50" Type="@SpinnerType.Bootstrap5"></SfSpinner>
-        
-  @if(filteredTasks!=null){
-<BodyCard CardTitle="All Tasks">
-    <div class="row mt-3 mb-3">
-        <div class="col-12 d-flex justify-content-center">
-            <div class="d-flex justify-content-center">
-                <InputText id="search" @bind-Value="@searchQuery" placeholder="Search for a task"
-                    class="form-control" />
-                <div class="d-flex justify-content-end">
-                    <InputSelect id="filter" @bind-Value="@selectedFilterOption">
-                        <option value="All">All</option>
-                        <option value="priorityfilter">Filter By Priority</option>
-                        <option value="datefilter">Filter By Date</option>
-                    </InputSelect>
+
+<SfSpinner @bind-Visible="@spinnerVisible" Label="Loadind Data..." Size="50" Type="@SpinnerType.Bootstrap5"></SfSpinner>
+
+@if (filteredTasks != null)
+{
+    <BodyCard CardTitle="All Tasks">
+        <div class="row mt-3 mb-3">
+            <div class="col-12 d-flex justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <InputText id="search" @bind-Value="@searchQuery" placeholder="Search for a task"
+                        class="form-control" />
+                    <div class="d-flex justify-content-end">
+                        <InputSelect id="filter" @bind-Value="@selectedFilterOption">
+                            <option value="All">All</option>
+                            <option value="priorityfilter">Filter By Priority</option>
+                            <option value="datefilter">Filter By Date</option>
+                        </InputSelect>
+                    </div>
+                    <button class="btn btn-success ms-2" @onclick="FilterTaskAction">Search</button>
                 </div>
-                <button class="btn btn-success ms-2" @onclick="FilterTaskAction">Search</button>
             </div>
         </div>
-    </div>
 
-   
-        <SfGrid CssClass="custom-font" DataSource="@filteredTasks" AllowPaging="true" Width="auto" EnableStickyHeader=true>
+
+        <SfGrid  DataSource="@filteredTasks" 
+        Style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-size:15px;" 
+        AllowPaging="true" Width="auto" EnableStickyHeader=true>
             <GridPageSettings PageSize="5" PageCount="3" PageSizes="@pagerDropDown"></GridPageSettings>
-            
+
             <GridColumns>
-               <GridColumn HeaderText="No" Width="50"  Template="@((context) => CountTemplate((UserTask)context, filteredTasks?.ToList().IndexOf((UserTask)context) ?? 0))"></GridColumn>
-        <GridColumn Field=@nameof(UserTask.Name) HeaderText="Task Name" Width="150"></GridColumn>
+                <GridColumn HeaderText="No" Width="50"
+                    Template="@((context) => CountTemplate((UserTask)context, filteredTasks?.ToList().IndexOf((UserTask)context) ?? 0))">
+                </GridColumn>
+                <GridColumn Field=@nameof(UserTask.Name) HeaderText="Task Name" Width="150"  
+                Template="@((context)=>TaskNameTemplate((UserTask)context))" ></GridColumn>
                 <GridColumn Field=@nameof(UserTask.Description) HeaderText="Description" Width="150"></GridColumn>
                 <GridColumn Field=@nameof(UserTask.Priority) HeaderText="Priority Level" Width="100"></GridColumn>
                 <GridColumn Field=@nameof(UserTask.DeadlineDate) HeaderText="Due Date" Format="d" Width="100"></GridColumn>
                 <GridColumn HeaderText="Status" Width="150" Template="@((context) => StatusTemplate((UserTask)context))">
                 </GridColumn>
-                 <GridColumn HeaderText="Mark as Done" Width="150"
+                <GridColumn HeaderText="Mark as Done" Width="150"
                     Template="@((context) => MarkAsDoneTemplate((UserTask)context))"></GridColumn>
                 <GridColumn HeaderText="Action" Width="150" Template="@((context) => ActionTemplate((UserTask)context))">
                 </GridColumn>
             </GridColumns>
         </SfGrid>
-</BodyCard>
-    }
+    </BodyCard>
+}
 
 @code {
-    private UserTask[]? filteredTasks;
+    private UserTask[]? originalTasks; // Holds the original list of tasks
+    private UserTask[]? filteredTasks; // Holds the filtered tasks
     private string searchQuery = string.Empty;
     private string selectedFilterOption = "All";
 
-public bool spinnerVisible{get; set;}
-    private static string statusClass(bool isTrue)=>(isTrue? "e-success": "e-warning");
-    public string[] pagerDropDown{get; set;}= new string[]{"All","5","10","15","20"};
+    public bool spinnerVisible { get; set; }
+    private static string statusClass(bool isTrue) => (isTrue ? "e-success" : "e-warning");
+    public string[] pagerDropDown { get; set; } = new string[] { "All", "5", "10", "15", "20" };
 
     protected override async Task OnInitializedAsync()
     {
         if (this == null) return;
-        spinnerVisible=true;
-        await Task.Delay(3000);
-        filteredTasks = await TaskClient.GetUserTasksAsync();
-        spinnerVisible=false;
+        spinnerVisible = true;
+        await Task.Delay(1000);
+        originalTasks = await TaskClient.GetUserTasksAsync();
+        filteredTasks = originalTasks; // Initially, filteredTasks is the same as originalTasks
+        spinnerVisible = false;
     }
+  private RenderFragment TaskNameTemplate(UserTask context) => @<span class="@GetTaskNameClass(context.Status)">
+    @context.Name
+</span>;
+
 
 
 
@@ -86,12 +98,12 @@ public bool spinnerVisible{get; set;}
         try
         {
             var updatedTask = new UserTask
-                        {
-                            Id = task.Id,
-                            Status = task.Status,
-                            Name = task.Name,
-                            PriorityId = task.PriorityId
-                        };
+            {
+                Id = task.Id,
+                Status = task.Status,
+                Name = task.Name,
+                PriorityId = task.PriorityId
+            };
 
             await TaskClient.UpdateTaskStatusAsync(updatedTask);
 
@@ -112,15 +124,15 @@ public bool spinnerVisible{get; set;}
 
     private void FilterTaskAction()
     {
-        if (filteredTasks == null) return;
+        if (originalTasks == null) return; // Ensure originalTasks is not null
 
-        IEnumerable<UserTask> tasks = filteredTasks;
+        IEnumerable<UserTask> tasks = originalTasks; // Start with the original list
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
             var searchTerm = searchQuery.ToLower();
             tasks = tasks.Where(t => t.Name.ToLower().Contains(searchTerm) ||
-    (t.Description?.ToLower() ?? string.Empty).Contains(searchTerm));
+                (t.Description?.ToLower() ?? string.Empty).Contains(searchTerm));
         }
 
         switch (selectedFilterOption)
@@ -131,6 +143,10 @@ public bool spinnerVisible{get; set;}
             case "datefilter":
                 tasks = tasks.OrderBy(t => t.DeadlineDate);
                 break;
+            case "All":
+                // Reset to original order
+                filteredTasks = originalTasks.ToArray();
+                return;
         }
 
         filteredTasks = tasks.ToArray();
@@ -148,17 +164,16 @@ public bool spinnerVisible{get; set;}
     </button>;
 
     private RenderFragment ActionTemplate(UserTask context) => @<div class="d-flex">
-        <a href="@TaskUrl(context.Id)"  class="btn btn-primary me-2">
+        <a href="@TaskUrl(context.Id)" class="btn btn-primary me-2">
             <i class="bi bi-pencil-square"></i>
         </a>
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(context)">
             <i class="bi bi-trash"></i>
         </button>
-        <DeleteTask Task="context"/>
+        <DeleteTask Task="context" />
     </div>;
 
-
-  private RenderFragment CountTemplate(UserTask context, int index) => @<text>@(index + 1)</text>;
+    private RenderFragment CountTemplate(UserTask context, int index) => @<text>@(index + 1)</text>;
 
     private static string TaskUrl(int id) => $"editTask/{id}";
 
